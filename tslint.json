@@ -1,0 +1,9 @@
+{
+    "extends": "tslint:recommended",
+    "rules": {
+        "max-line-length": {
+            "options": [100]
+        }
+        // "completed-docs": true
+    }
+}

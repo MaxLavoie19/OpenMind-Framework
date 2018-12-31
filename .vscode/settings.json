@@ -1,0 +1,7 @@
+{
+    "mocha.requires": [
+      "ts-node/register",
+      "amd-loader"
+    ],
+    "mocha.files.glob": "./test/**/*.ts"
+}

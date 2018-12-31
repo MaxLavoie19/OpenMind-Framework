@@ -1,0 +1,37 @@
+{
+  "name": "openmind-framework",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -r ts-node/register -r amd-loader ./test/**/*.ts",
+    "tslint": "tslint src/*.ts test/**/*.ts",
+    "tslint-fix": "tslint --fix src/*.ts test/**/*.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaxLavoie19/openmind-framework.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MaxLavoie19/openmind-framework/issues"
+  },
+  "homepage": "https://github.com/MaxLavoie19/openmind-framework#readme",
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.11.4",
+    "chai": "^4.2.0",
+    "istanbul": "1.1.0-alpha.1",
+    "mocha": "^5.2.0",
+    "ts-node": "^7.0.1",
+    "typescript": "^3.1.1"
+  },
+  "dependencies": {
+    "amd-loader": "0.0.8",
+    "tslint": "^5.12.0",
+    "uuid": "^3.3.2"
+  }
+}
