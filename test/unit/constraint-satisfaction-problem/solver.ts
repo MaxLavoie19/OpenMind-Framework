@@ -2,7 +2,7 @@ import { expect } from "chai";
 import "mocha";
 import { Solver } from "../../../src/constraint-satisfaction-problem/solver";
 
-describe("ConstraintSatisfactionProblemSolver", () => {
+describe("Solver", () => {
     it("should be instantiable", () => {
         const solver = new Solver([]);
         expect(solver).to.be.instanceOf(Solver);
