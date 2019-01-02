@@ -2,33 +2,35 @@ import { RandomSelector } from "../selector/random-selector";
 import { StateMachine } from "../state-machine/state-machine";
 import { ITransition } from "../state-machine/transition-interface";
 import { RandomSelectorInterface } from "./random-selector-interface";
-import { ValueEvaluator } from "./value-evaluator-interface";
+import { StateEvaluator } from "./state-evaluator-interface";
 
 export class Simulator {
-    private currentStateName: string = "";
     private stateMachine: StateMachine;
     private nbIteration: number = 0;
     private randomSelector: RandomSelector<ITransition>;
     constructor(
         stateMachine: StateMachine,
-        valueEvaluationFunction: ValueEvaluator,
+        valueEvaluationFunction: StateEvaluator,
         randomSelector: RandomSelectorInterface,
     ) {
         this.stateMachine = stateMachine;
-        this.randomSelector = new randomSelector(valueEvaluationFunction);
+        this.randomSelector = new randomSelector((transition: ITransition) => {
+            // if it's a final node
+            //  get the value for the playing agent
+            // else
+            //  recursively get the value
+            const state = this.stateMachine.getState(transition.destination);
+            return valueEvaluationFunction(state);
+        });
     }
-    public setCurrentState(stateName: string) {
-        this.currentStateName = stateName;
-        this.stateMachine.setCurrentState(stateName);
-    }
-    public simulate(nbIteration: number = 100) {
+    public simulate(stateName: string, nbIteration: number = 100) {
         this.nbIteration = nbIteration;
-        this._monteCarlo();
+        this._monteCarlo(stateName);
     }
-    private _monteCarlo(): ITransition | undefined {
+    private _monteCarlo(stateName: string): ITransition | undefined {
         let selectedTransition;
         if (this.nbIteration > 0 ) {
-            const stateTransitionList = this._getStateTransitionList(this.currentStateName);
+            const stateTransitionList = this._getStateTransitionList(stateName);
             selectedTransition = this._select(stateTransitionList);
         }
         return selectedTransition;
@@ -37,11 +39,6 @@ export class Simulator {
         return this.stateMachine.getStateTransitionList(stateName);
     }
     private _select(transitionList: ITransition[]) {
-        transitionList.forEach(
-            (transition) => {
-                transition.destinationState = this.stateMachine.getState(transition.destination);
-            },
-        );
         return this.randomSelector.rouletteSelect(transitionList);
         // roulette select a state to simulate from
     }

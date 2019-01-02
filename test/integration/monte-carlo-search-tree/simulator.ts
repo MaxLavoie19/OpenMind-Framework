@@ -67,7 +67,6 @@ describe("Simulator", () => {
             },
             RandomSelector,
         );
-        simulator.setCurrentState("initial");
-        simulator.simulate();
+        simulator.simulate("initial");
     });
 });
