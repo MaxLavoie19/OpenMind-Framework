@@ -10,36 +10,46 @@ export class Simulator {
     private randomSelector: RandomSelector<ITransition>;
     constructor(
         stateMachine: StateMachine,
-        valueEvaluationFunction: StateEvaluator,
+        evaluateState: StateEvaluator,
         randomSelector: RandomSelectorInterface,
     ) {
         this.stateMachine = stateMachine;
         this.randomSelector = new randomSelector((transition: ITransition) => {
-            // if it's a final node
-            //  get the value for the playing agent
-            // else
-            //  recursively get the value
-            const state = this.stateMachine.getState(transition.destination);
-            return valueEvaluationFunction(state);
+            const originStateName = transition.destination;
+            const originState = this._getState(originStateName);
+            const stateName = transition.destination;
+            const state = this._getState(stateName);
+            const stateTransitionList = this._getStateTransitionList(stateName);
+            const childStateList = stateTransitionList.map((childTransition) => {
+                return this._getState(childTransition.destination);
+            });
+            return evaluateState(originState, state, childStateList);
         });
     }
     public simulate(stateName: string, nbIteration: number = 100) {
         this.nbIteration = nbIteration;
         this._monteCarlo(stateName);
     }
-    private _monteCarlo(stateName: string): ITransition | undefined {
+    private _monteCarlo(stateName: string): void {
         let selectedTransition;
         if (this.nbIteration > 0 ) {
-            const stateTransitionList = this._getStateTransitionList(stateName);
-            selectedTransition = this._select(stateTransitionList);
+            const transitionList = this._getStateTransitionList(stateName);
+            selectedTransition = this._selectTransition(transitionList);
+            if (selectedTransition) {
+                this._monteCarlo(selectedTransition.destination);
+            } else {
+                this.nbIteration--;
+            }
+            // update the node's value
         }
-        return selectedTransition;
+    }
+    private _getState(stateName: string) {
+        return this.stateMachine.getState(stateName);
     }
     private _getStateTransitionList(stateName: string) {
         return this.stateMachine.getStateTransitionList(stateName);
     }
-    private _select(transitionList: ITransition[]) {
+    private _selectTransition(transitionList: ITransition[]) {
         return this.randomSelector.rouletteSelect(transitionList);
-        // roulette select a state to simulate from
     }
 }

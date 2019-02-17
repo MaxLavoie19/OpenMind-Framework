@@ -1,3 +1,3 @@
 import { State } from "../state-machine/state";
 
-export type StateEvaluator = (state: State) => number;
+export type StateEvaluator = (originState: State, state: State, childStateList: State[]) => number;
